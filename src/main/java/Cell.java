@@ -2,15 +2,16 @@ import jangl.graphics.shaders.ColorShader;
 import jangl.shapes.Rect;
 
 public class Cell implements AutoCloseable {
+    private static final ColorShader COLOR_ALIVE_PLAYING = new ColorShader(0, 0.8f, 0, 1);
+    private static final ColorShader COLOR_ALIVE_PAUSED = new ColorShader(0.9f, 0, 0, 1);
+    private static final ColorShader COLOR_DEAD = new ColorShader(0.2f, 0.2f, 0.2f, 1);
+
     private final Rect rect;
-    private final ColorShader color;
     private boolean alive;
     private boolean playing;
 
     public Cell(Rect rect) {
         this.rect = rect;
-        this.color = new ColorShader(0, 0, 0, 1);
-
         this.die();
     }
 
@@ -26,38 +27,34 @@ public class Cell implements AutoCloseable {
         }
     }
 
-    public void calculateColor() {
+    public ColorShader calculateColor() {
         if (!this.alive) {  // set to gray if not alive
-            this.color.setRGBA(0.2f, 0.2f, 0.2f, 1);
+            return COLOR_DEAD;
         } else if (this.playing) {  // set to green if alive and playing
-            this.color.setRGBA(0, 0.8f, 0, 1);
+            return COLOR_ALIVE_PLAYING;
         } else {  // set to red if alive and not playing
-            this.color.setRGBA(0.8f, 0, 0, 1);
+            return COLOR_ALIVE_PAUSED;
         }
     }
 
     public void live() {
         this.alive = true;
-        this.calculateColor();
     }
 
     public void die() {
         this.alive = false;
-        this.calculateColor();
     }
 
     public void setPlaying(boolean playing) {
         this.playing = playing;
-        this.calculateColor();
     }
 
     public void draw() {
-        this.rect.draw(this.color);
+        this.rect.draw(this.calculateColor());
     }
 
     @Override
     public void close() {
         this.rect.close();
-        this.color.close();
     }
 }
