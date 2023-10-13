@@ -1,7 +1,8 @@
 import jangl.JANGL;
-import jangl.coords.ScreenCoords;
+import jangl.color.ColorFactory;
+import jangl.coords.WorldCoords;
 import jangl.graphics.font.Text;
-import jangl.graphics.font.parser.Font;
+import jangl.graphics.font.Font;
 import jangl.io.Window;
 import jangl.io.keyboard.KeyEvent;
 import jangl.io.keyboard.Keyboard;
@@ -24,7 +25,7 @@ public class ConwaysGOL implements AutoCloseable {
                 "src/main/resources/arial/arial.png"
         );
 
-        this.instructions = new Text(new ScreenCoords(-0.99f, 0.99f), font, 0.05f,
+        this.instructions = new Text(new WorldCoords(0.01f, 0.99f), font, 0.05f,
                 "Click to change a cell state. Press space to toggle the sim.");
     }
 
@@ -63,7 +64,7 @@ public class ConwaysGOL implements AutoCloseable {
     }
 
     public void run() {
-        Window.setClearColor(0.1f, 0.1f, 0.1f, 1);
+        Window.setClearColor(ColorFactory.fromNormalized(0.1f, 0.1f, 0.1f, 1));
 
         while (Window.shouldRun()) {
             this.update();

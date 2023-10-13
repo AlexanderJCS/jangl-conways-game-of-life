@@ -1,10 +1,12 @@
-import jangl.graphics.shaders.ColorShader;
+import jangl.color.ColorFactory;
+import jangl.graphics.shaders.ShaderProgram;
+import jangl.graphics.shaders.premade.ColorShader;
 import jangl.shapes.Rect;
 
 public class Cell implements AutoCloseable {
-    private static final ColorShader COLOR_ALIVE_PLAYING = new ColorShader(0, 0.8f, 0, 1);
-    private static final ColorShader COLOR_ALIVE_PAUSED = new ColorShader(0.9f, 0, 0, 1);
-    private static final ColorShader COLOR_DEAD = new ColorShader(0.2f, 0.2f, 0.2f, 1);
+    private static final ShaderProgram COLOR_ALIVE_PLAYING = new ShaderProgram(new ColorShader(ColorFactory.fromNormalized(0, 0.8f, 0, 1)));
+    private static final ShaderProgram COLOR_ALIVE_PAUSED = new ShaderProgram(new ColorShader(ColorFactory.fromNormalized(0.9f, 0, 0, 1)));
+    private static final ShaderProgram COLOR_DEAD = new ShaderProgram(new ColorShader(ColorFactory.fromNormalized(0.2f, 0.2f, 0.2f, 1)));
 
     private final Rect rect;
     private boolean alive;
@@ -27,7 +29,7 @@ public class Cell implements AutoCloseable {
         }
     }
 
-    public ColorShader calculateColor() {
+    public ShaderProgram calculateColor() {
         if (!this.alive) {  // set to gray if not alive
             return COLOR_DEAD;
         } else if (this.playing) {  // set to green if alive and playing

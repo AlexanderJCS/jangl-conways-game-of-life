@@ -1,5 +1,5 @@
 import jangl.coords.PixelCoords;
-import jangl.coords.ScreenCoords;
+import jangl.coords.WorldCoords;
 import jangl.io.Window;
 import jangl.shapes.Rect;
 import jangl.time.Clock;
@@ -17,26 +17,25 @@ public class Cells implements AutoCloseable {
         this.timeToUpdate = 0;
 
         this.cells = new Cell[height][width];
-        this.generateCells(new ScreenCoords(-1, -1));
+        this.generateCells(new WorldCoords(0, 0));
     }
 
-    private void generateCells(ScreenCoords bottomLeft) {
-        float xScreenDistPerBox = 2f / this.cells.length;
-        float yScreenDistPerBox = 2f / this.cells[0].length;
+    private void generateCells(WorldCoords bottomLeft) {
+        float xScreenDistPerBox = WorldCoords.getTopRight().x / this.cells.length;
+        float yScreenDistPerBox = WorldCoords.getTopRight().y / this.cells[0].length;
 
-        float xSpace = PixelCoords.distXtoScreenDist(2);
-        float ySpace = PixelCoords.distYtoScreenDist(2);
+        float spacing = PixelCoords.distToWorldCoords(2);
 
         // Generate the boxes
         for (int h = 0; h < this.cells.length; h++) {
             for (int w = 0; w < this.cells[h].length; w++) {
                 Rect rect = new Rect(
-                        new ScreenCoords(
+                        new WorldCoords(
                                 xScreenDistPerBox * w + bottomLeft.x,
                                 yScreenDistPerBox * h + yScreenDistPerBox + bottomLeft.y
                         ),
-                        xScreenDistPerBox - xSpace,
-                        yScreenDistPerBox - ySpace
+                        xScreenDistPerBox - spacing,
+                        yScreenDistPerBox - spacing
                 );
 
                 this.cells[h][w] = new Cell(rect);
@@ -112,7 +111,7 @@ public class Cells implements AutoCloseable {
      * @param screenCoords The screen coords.
      * @return The cell at the screen coordinates.
      */
-    public Cell getCellAt(ScreenCoords screenCoords) {
+    public Cell getCellAt(WorldCoords screenCoords) {
         PixelCoords pixelCoords = screenCoords.toPixelCoords();
         int x = (int) (pixelCoords.x / Window.getScreenWidth() * this.cells[0].length);
         int y = (int) (pixelCoords.y / Window.getScreenHeight() * this.cells.length);
